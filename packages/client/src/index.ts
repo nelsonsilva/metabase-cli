@@ -385,6 +385,7 @@ export {
   PermissionsGraph,
   PermissionsGraphRevision,
   PermissionsGraphUpdateInput,
+  SandboxInput,
   ViewDataPermission,
   YesNoPermission,
 } from "./domain/permission";
@@ -427,6 +428,7 @@ export {
   ReplacementSourceInput,
   ReplacementSourceType,
 } from "./domain/replacement";
+export { Sandbox, SandboxCompact } from "./domain/sandbox";
 export { SEARCH_MODELS, SearchModel, SearchResult, SearchResultCompact } from "./domain/search";
 export { Segment, SegmentCompact, SegmentCreateInput, SegmentUpdateInput } from "./domain/segment";
 export { SessionProperties, TokenFeatures } from "./domain/session-properties";

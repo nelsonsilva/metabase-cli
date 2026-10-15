@@ -12,6 +12,7 @@ const UNSENT_INPUTS: Readonly<Record<string, string>> = {
   DashboardLayoutInput: "the CLI's dashboard create sends it through dashboard.update",
   DashcardPatchInput:
     "dashboard.updateDashcard merges it into one of the dashcards dashboard.update sends, unchecked",
+  SandboxInput: "nested in the permissions graph update input, unchecked",
   TipTapNodeInput: "nested in the document inputs, unchecked",
   TransformSourceTableEntryInput: "nested in the transform and Python test-run inputs, unchecked",
   TransformTestInput: "nested in the transform test inputs, unchecked",

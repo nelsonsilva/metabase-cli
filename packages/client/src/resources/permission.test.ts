@@ -4,7 +4,15 @@ import { createClient } from "../client";
 import type { PermissionsGraphUpdateInput } from "../domain/permission";
 import { ConfigError, ResponseShapeError } from "../errors";
 import type { ClientCredentials } from "../http/transport";
-import { captureFetch, jsonResponse, TEST_USER_AGENT, thrownBy } from "../testing/fetch-capture";
+import {
+  captureFetch,
+  jsonResponse,
+  premiumRefusalResponse,
+  probeResponse,
+  TEST_USER_AGENT,
+  thrownBy,
+} from "../testing/fetch-capture";
+import { CapabilityError } from "../version/capability-error";
 import { createServerProfile } from "../version/profile";
 
 const CREDENTIALS: ClientCredentials = {
@@ -71,12 +79,20 @@ const SERVER_58 = createServerProfile({
   tokenFeatures: null,
 });
 
-function clientOver(responses: Array<Response>) {
+const UNLICENSED_58 = createServerProfile({
+  edition: "ee",
+  version: { kind: "release", tag: "v1.58.0", major: 58, patch: 0 },
+  date: null,
+  hash: null,
+  tokenFeatures: { sandboxes: false },
+});
+
+function clientOver(responses: Array<Response>, server = SERVER_58) {
   const capture = captureFetch(responses);
   const mb = createClient(CREDENTIALS, {
     userAgent: TEST_USER_AGENT,
     fetchImpl: capture.fetch,
-    server: SERVER_58,
+    server,
   });
   return { mb, capture };
 }
@@ -153,7 +169,56 @@ describe("permission resource wire requests", () => {
   });
 });
 
+// Group 5 restricted to its rows of table 11, by card 100 filtered on the `enterprise_id` attribute.
+const RESTRICTED: PermissionsGraphUpdateInput = {
+  revision: 7,
+  groups: {
+    "5": {
+      "1": {
+        "view-data": { public: { "11": "sandboxed" } },
+        "create-queries": { public: { "11": "query-builder" } },
+      },
+    },
+  },
+  sandboxes: [
+    {
+      group_id: 5,
+      table_id: 11,
+      card_id: 100,
+      attribute_remappings: { enterprise_id: ["variable", ["template-tag", "enterprise_id"]] },
+    },
+  ],
+};
+
 describe("permission graph update", () => {
+  it("sends row and column security policies with the update", async () => {
+    const { mb, capture } = clientOver([jsonResponse({ revision: 8 })]);
+
+    await mb.permission.updateGraph(RESTRICTED);
+
+    expect(capture.calls.map((call) => call.body)).toEqual([JSON.stringify(RESTRICTED)]);
+  });
+
+  it("explains a refused update with policies as the missing sandboxes token", async () => {
+    const { mb } = clientOver(
+      [premiumRefusalResponse("Sandboxes"), probeResponse(UNLICENSED_58)],
+      UNLICENSED_58,
+    );
+
+    const error = await thrownBy(() => mb.permission.updateGraph(RESTRICTED));
+
+    assert(error instanceof CapabilityError, "expected CapabilityError");
+    expect(error.developerDetail).toEqual({
+      reason: "missing-token-feature",
+      detail:
+        "This operation requires the 'sandboxes' premium feature (not enabled on this server).",
+      feature: "rowSecurity",
+      since: 58,
+      tokenFeature: "sandboxes",
+      serverVersion: "v1.58.0",
+    });
+  });
+
   it("sends the update and asks for no graph back", async () => {
     const { mb, capture } = clientOver([jsonResponse({ revision: 8 })]);
 

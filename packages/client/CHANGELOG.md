@@ -5,6 +5,7 @@ Notable changes to `@metabase/client`.
 ## Unreleased
 
 - `permission.updateGraph` updates the data permissions graph from `PermissionsGraphUpdateInput` (`{revision, groups}`) and answers the new `PermissionsGraphRevision`, both on the barrel.
+- `sandbox.list` lists the row and column security policies (`Sandbox`, `SandboxCompact`), and `PermissionsGraphUpdateInput` takes `sandboxes` (`SandboxInput`) to create or change them with the graph. All are on the barrel.
 
 ## 0.1.4
 
