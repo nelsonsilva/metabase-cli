@@ -59,3 +59,19 @@ export const PermissionsGraph = z
   })
   .loose();
 export type PermissionsGraph = z.infer<typeof PermissionsGraph>;
+
+// Only the groups and databases named in `groups` change; `revision` must be the latest the server
+// holds, or it rejects the update.
+export const PermissionsGraphUpdateInput = z
+  .object({
+    revision: z.number().int().nonnegative(),
+    groups: z.record(z.string(), z.record(z.string(), DatabasePermissions)),
+  })
+  .strict();
+export type PermissionsGraphUpdateInput = z.infer<typeof PermissionsGraphUpdateInput>;
+
+// The answer to an update that skips returning the graph: the revision the update created.
+export const PermissionsGraphRevision = z
+  .object({ revision: z.number().int().nonnegative() })
+  .loose();
+export type PermissionsGraphRevision = z.infer<typeof PermissionsGraphRevision>;
