@@ -12,7 +12,7 @@ import { defineMetabaseCommand } from "../runtime";
 export default defineMetabaseCommand({
   meta: { name: "update-graph", description: "Update data permissions from a JSON graph" },
   details:
-    "The body is `{revision, groups}` in the shape `mb permission graph` returns. Only the groups and databases it names change. `revision` must be the latest the server holds: read the graph, change it, and send it back, so a change someone made in between is never overwritten. Admins only.",
+    "The body is `{revision, groups}` in the shape `mb permission graph` returns, plus an optional `sandboxes` array of row and column security policies (`{group_id, table_id, card_id, attribute_remappings}`, with the policy's `id` to change an existing one) for tables set to `sandboxed`. Only the groups and databases it names change. `revision` must be the latest the server holds: read the graph, change it, and send it back, so a change someone made in between is never overwritten. Admins only.",
   requires: ["permission.updateGraph"],
   args: {
     ...outputFlags,

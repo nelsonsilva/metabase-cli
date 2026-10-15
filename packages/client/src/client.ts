@@ -22,6 +22,7 @@ import { permissionResource } from "./resources/permission";
 import { pulseResource } from "./resources/pulse";
 import { replacementResource } from "./resources/replacement";
 import { revisionResource } from "./resources/revision";
+import { sandboxResource } from "./resources/sandbox";
 import { searchResource } from "./resources/search";
 import { segmentResource } from "./resources/segment";
 import { settingResource } from "./resources/setting";
@@ -69,6 +70,7 @@ export function createClient(config: ClientCredentials, options: ClientOptions) 
     pulse: pulseResource(transport),
     replacement: replacementResource(transport),
     revision: revisionResource(transport),
+    sandbox: sandboxResource(transport),
     search: searchResource(transport),
     segment: segmentResource(transport),
     setting: settingResource(transport),

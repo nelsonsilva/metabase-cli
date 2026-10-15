@@ -397,6 +397,7 @@ const ALL_COMMANDS = [
   "glossary delete",
   "permission graph",
   "permission update-graph",
+  "sandbox list",
   "transform list",
   "transform get",
   "transform dependencies",

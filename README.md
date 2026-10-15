@@ -2047,7 +2047,7 @@ mb permission graph --group 3
 
 ### `mb permission update-graph`
 
-Update data permissions from a JSON body in the shape `graph` prints. Only the groups and databases the body names change. `revision` must be the latest the server holds, so read the graph, change it and send it back; the server rejects an update made against an older revision, so a change someone made in between is never overwritten. Prints the new revision.
+Update data permissions from a JSON body in the shape `graph` prints. An optional `sandboxes` array creates or changes row and column security policies in the same request (see [Row and column security](#row-and-column-security)). Only the groups and databases the body names change. `revision` must be the latest the server holds, so read the graph, change it and send it back; the server rejects an update made against an older revision, so a change someone made in between is never overwritten. Prints the new revision.
 
 ```sh
 mb permission update-graph --file graph.json
@@ -2058,6 +2058,30 @@ mb permission update-graph --body '{"revision":7,"groups":{"3":{"2":{"view-data"
 | --------------- | ----------------------- |
 | `--body <json>` | Inline JSON body.       |
 | `--file <path>` | Path to JSON body file. |
+
+## Row and column security
+
+Row and column security policies (sandboxes), from `/api/mt/gtap`. A policy restricts one group on one table: the rows a saved question returns replace the table for that group, or the table is filtered directly, with user attributes mapped onto the question's variables or the table's columns. Needs an admin and the `sandboxes` premium feature.
+
+### `mb sandbox list`
+
+Lists every policy: `id`, `group_id`, `table_id`, `card_id` (`null` when the table is filtered directly) and `attribute_remappings`.
+
+```sh
+mb sandbox list
+mb sandbox list --json
+```
+
+Policies are created and changed with `mb permission update-graph`: set the table's `view-data` to `sandboxed` for the group, and send the policy in `sandboxes`. A policy with an `id` updates that policy.
+
+```sh
+mb permission update-graph --body '{
+  "revision": 7,
+  "groups": {"3": {"2": {"view-data": {"PUBLIC": {"11": "sandboxed"}}, "create-queries": {"PUBLIC": {"11": "query-builder"}}}}},
+  "sandboxes": [{"group_id": 3, "table_id": 11, "card_id": 42,
+                 "attribute_remappings": {"tenant": ["variable", ["template-tag", "tenant"]]}}]
+}'
+```
 
 ## Settings
 

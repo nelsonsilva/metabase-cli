@@ -60,12 +60,26 @@ export const PermissionsGraph = z
   .loose();
 export type PermissionsGraph = z.infer<typeof PermissionsGraph>;
 
+// A row and column security policy as a graph update creates or changes it: with an `id` it updates
+// that policy, without one it creates a policy for the group and table.
+export const SandboxInput = z
+  .object({
+    id: z.number().int().optional(),
+    group_id: z.number().int(),
+    table_id: z.number().int(),
+    card_id: z.number().int().nullable(),
+    attribute_remappings: z.record(z.string(), z.unknown()),
+  })
+  .strict();
+export type SandboxInput = z.infer<typeof SandboxInput>;
+
 // Only the groups and databases named in `groups` change; `revision` must be the latest the server
 // holds, or it rejects the update.
 export const PermissionsGraphUpdateInput = z
   .object({
     revision: z.number().int().nonnegative(),
     groups: z.record(z.string(), z.record(z.string(), DatabasePermissions)),
+    sandboxes: z.array(SandboxInput).optional(),
   })
   .strict();
 export type PermissionsGraphUpdateInput = z.infer<typeof PermissionsGraphUpdateInput>;

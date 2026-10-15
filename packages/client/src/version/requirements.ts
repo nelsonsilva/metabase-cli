@@ -128,6 +128,7 @@ export const METHOD_REQUIREMENTS = {
   "replacement.cancelRun": ["sourceReplacement"],
   "revision.list": [],
   "revision.revert": [],
+  "sandbox.list": ["rowSecurity"],
   "search.query": [],
   "segment.list": [],
   "segment.get": [],

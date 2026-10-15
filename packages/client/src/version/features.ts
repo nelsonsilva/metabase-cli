@@ -30,6 +30,7 @@ export const FEATURE_RULES = {
   remoteSyncMerge: { since: 63, tokenFeature: "remote_sync" },
   contentTranslation: { since: 58, tokenFeature: "content_translation" },
   contentVerification: { since: 58, tokenFeature: "content_verification" },
+  rowSecurity: { since: 58, tokenFeature: "sandboxes" },
   transformTargetTableId: { since: 61 },
   transformTargetTableLinkedOnCreate: { since: 61, until: 61 },
   transformJobRunIdIsNumeric: { since: 64 },

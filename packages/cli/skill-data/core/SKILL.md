@@ -12,11 +12,11 @@ Top-level command groups (run `mb <group> --help` to discover verbs):
 
 ```
 auth | db | table | field | upload | content-translation | query | card | dashboard | snippet | segment | measure | collection | library
-document | glossary | permission | timeline | timeline-event | transform | transform-job | transform-tag | transform-test | alert | subscription | setting
+document | glossary | permission | sandbox | timeline | timeline-event | transform | transform-job | transform-tag | transform-test | alert | subscription | setting
 search | dependency | git-sync | data-action | setup | eid | uuid | upgrade | skills
 ```
 
-The conventions below — auth, flags, output, body input — hold across **every** group. Per-command flags and examples live in each command's `--help`; add `--json` for the machine-readable form with the output JSON Schema. A few flows have their own skills (see "Specialized skills"). When a card needs a query, prefer MBQL over native SQL (portable, pre-flight-validated — load `mbql`); fall back to native SQL when MBQL can't express it.
+The conventions below — auth, flags, output, body input — hold across **every** group. Per-command flags and examples live in each command's `--help` (`--json` adds the output JSON Schema). A few flows have their own skills (see "Specialized skills"). When a card needs a query, prefer MBQL over native SQL (portable, pre-flight-validated — load `mbql`); fall back to native SQL when MBQL can't express it.
 
 ## Auth & profiles
 

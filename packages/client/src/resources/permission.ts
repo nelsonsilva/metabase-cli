@@ -4,11 +4,19 @@ import {
   PermissionsGraphUpdateInput,
 } from "../domain/permission";
 import type { RequestOptions, Transport } from "../http/transport";
+import { explainer, type ParameterRequirement } from "../version/refusal";
 
 import { parseRequestBody } from "./request-body";
 
+// Row and column security policies ride the update only on a server granting them.
+function updateGraphFeatures(params: PermissionsGraphUpdateInput): ParameterRequirement[] {
+  return params.sandboxes?.length ? [{ feature: "rowSecurity", fields: ["sandboxes"] }] : [];
+}
+
 // Every path parameter here is a numeric id, so no fragment needs `encodeURIComponent`.
 export function permissionResource(transport: Transport) {
+  const { explain } = explainer(transport, "permission");
+
   /**
    * Get the data permissions of every group on every database, keyed by group id then database
    * id. Admin only. One read of the whole `data_permissions` table, so prefer `databaseGraph` when
@@ -40,7 +48,8 @@ export function permissionResource(transport: Transport) {
   }
 
   /**
-   * Update data permissions. Admin only. Only the groups and databases named in `groups` change, and the server
+   * Update data permissions, and create or change row and column security policies (`sandboxes`),
+   * in one request. Admin only. Only the groups and databases named in `groups` change, and the server
    * rejects the update when `revision` is not its latest, so a change made since the graph was read
    * is never overwritten. Asks the server not to answer the whole graph; answers the new revision.
    * A body that does not match `PermissionsGraphUpdateInput` is refused before any request.
@@ -58,5 +67,10 @@ export function permissionResource(transport: Transport) {
     });
   }
 
-  return { graph, databaseGraph, groupGraph, updateGraph };
+  return {
+    graph,
+    databaseGraph,
+    groupGraph,
+    updateGraph: explain("updateGraph", updateGraph, updateGraphFeatures),
+  };
 }
