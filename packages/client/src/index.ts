@@ -383,6 +383,8 @@ export {
   DatabasePermissions,
   DownloadPermission,
   PermissionsGraph,
+  PermissionsGraphRevision,
+  PermissionsGraphUpdateInput,
   ViewDataPermission,
   YesNoPermission,
 } from "./domain/permission";

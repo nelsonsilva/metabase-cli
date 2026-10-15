@@ -2,6 +2,10 @@
 
 Notable changes to `@metabase/client`.
 
+## Unreleased
+
+- `permission.updateGraph` updates the data permissions graph from `PermissionsGraphUpdateInput` (`{revision, groups}`) and answers the new `PermissionsGraphRevision`, both on the barrel.
+
 ## 0.1.4
 
 - A data app changes in Metabase only through a repository import, so `dataApp.create`, `dataApp.replaceBundle`, `dataApp.typedSchema` and `dataApp.remove` are gone, with `DataAppCreateInput`. `dataApp.update` takes only `enabled` (`DataAppUpdateInput`).
