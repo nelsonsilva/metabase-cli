@@ -2,6 +2,10 @@
 
 Notable changes to `@metabase/client`.
 
+## Unreleased
+
+- `database.create` adds a database connection from `DatabaseCreateInput` (`{name, engine, details}`), on the barrel. `DatabaseUpdateInput` also takes `name` and `details`, each optional, and refuses an empty body. `Database` reads the `details` an admin is answered, secrets redacted.
+
 ## 0.1.4
 
 - A data app changes in Metabase only through a repository import, so `dataApp.create`, `dataApp.replaceBundle`, `dataApp.typedSchema` and `dataApp.remove` are gone, with `DataAppCreateInput`. `dataApp.update` takes only `enabled` (`DataAppUpdateInput`).

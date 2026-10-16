@@ -50,6 +50,7 @@ export const METHOD_REQUIREMENTS = {
   "dataApp.generateActions": ["dataApps"],
   "database.list": [],
   "database.get": [],
+  "database.create": [],
   "database.update": [],
   "database.schemas": [],
   "database.schemaTables": [],

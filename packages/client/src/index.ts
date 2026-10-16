@@ -206,6 +206,7 @@ export {
 export {
   Database,
   DatabaseCompact,
+  DatabaseCreateInput,
   DatabaseGetInclude,
   DatabaseListInclude,
   DatabaseSyncResult,
