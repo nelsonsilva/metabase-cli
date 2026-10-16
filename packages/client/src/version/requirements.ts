@@ -41,6 +41,7 @@ export const METHOD_REQUIREMENTS = {
   "dataAction.execute": [],
   "database.list": [],
   "database.get": [],
+  "database.create": [],
   "database.update": [],
   "database.schemas": [],
   "database.schemaTables": [],

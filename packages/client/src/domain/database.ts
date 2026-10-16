@@ -2,6 +2,7 @@ import { z } from "zod";
 
 import { CardType } from "./card";
 import { Table, TableCompact } from "./table";
+import { NonBlankText } from "./text";
 
 // A saved question standing in as a table of the Saved Questions virtual database, id `card__<id>`.
 // A database listing carries it without its columns.
@@ -38,6 +39,8 @@ export const Database = z
     engine: z.string().optional(),
     is_saved_questions: z.boolean().optional(),
     initial_sync_status: z.string().nullable().optional(),
+    // The connection settings, answered to admins only; secrets come back redacted.
+    details: z.record(z.string(), z.unknown()).nullable().optional(),
     tables: z.array(z.union([Table, DatabaseVirtualTable])).optional(),
   })
   .loose();
@@ -87,9 +90,32 @@ export const DatabaseWithSettingsCompact = DatabaseWithSettings.pick({
   });
 export type DatabaseWithSettingsCompact = z.infer<typeof DatabaseWithSettingsCompact>;
 
-export const DatabaseUpdateInput = z
-  .object({ settings: z.object({ [DATA_ACTIONS_SETTING]: z.boolean() }).strict() })
+// A connection's `details` are the driver's own keys (host, project id, credentials…), so they pass
+// through unchecked; the server tests the connection before it saves one.
+const DatabaseDetails = z.record(z.string(), z.unknown());
+
+export const DatabaseCreateInput = z
+  .object({
+    name: NonBlankText,
+    engine: NonBlankText,
+    details: DatabaseDetails,
+  })
   .strict();
+export type DatabaseCreateInput = z.infer<typeof DatabaseCreateInput>;
+
+// Each key is optional and the server changes only the ones named. A secret in `details` sent back
+// as the redacted value the server answered keeps the stored secret.
+export const DatabaseUpdateInput = z
+  .object({
+    name: NonBlankText.optional(),
+    details: DatabaseDetails.optional(),
+    settings: z
+      .object({ [DATA_ACTIONS_SETTING]: z.boolean() })
+      .strict()
+      .optional(),
+  })
+  .strict()
+  .refine((input) => Object.keys(input).length > 0, "name the fields to change");
 export type DatabaseUpdateInput = z.infer<typeof DatabaseUpdateInput>;
 
 export const DatabaseSyncResult = z.object({
